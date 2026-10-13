@@ -1,16 +1,16 @@
-## fpga-pong
+# fpga-pong
 
-My attempt at building Pong in SystemVerilog, with VGA output (640x480 @ 60Hz). I'm doing this to actually learn RTL design instead of just reading about it, so the code is written by me and the commit history shows the mistakes along the way.
+My attempt at building Pong in SystemVerilog, with VGA output (640x480 @ 60Hz). I’m doing this to learn RTL design instead of just reading about it, so the code is written by me, using tutorials and references along the way.
 
-Up until this point I am verifying everything through simulations until I can get access to a board to test on.
+For now I’m verifying everything through simulations until I can get access to a board to test on.
 
 ## Layout
 
-`rtl/` design files
+- `rtl/` design files
 
-`tb/` testbenches
+- `tb/` testbenches
 
-`docs/` waveforms and notes
+- `docs/` waveforms and notes
 
 ## Completed modules
 
@@ -48,23 +48,17 @@ What to look for:
 ## Things I got wrong 
 
 - Originally had `fend` as a level, not a pulse. With `cen` high only 1 in 4 clocks, it stayed high for 4 cycles, which would make the game update 4 times per frame. Fixed by ANDing with cen.
-
 - Made `hsync` low for the whole blanking period instead of just the sync pulse.
 
 
 
 ## Next
 
-- [] draw paddles + ball (static)
-
-- [] dump a frame to an image file so I can see it without a monitor 
-
-- [] paddle movement
-
-- [] ball physics / collisions
-
-- [] scoring + game states
-
-- [] get it on real hardware
+- [ ] draw paddles + ball (static)
+- [ ] dump a frame to an image file so I can see it without a monitor 
+- [ ] paddle movement
+- [ ] ball physics / collisions
+- [ ] scoring + game states
+- [ ] get it on real hardware
 
 
