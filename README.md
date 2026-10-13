@@ -32,7 +32,7 @@ Both are tested in EDA Playground. Waveforms are in docs/.
 
 ## Next
 
-- [] draw paddles + ball (static)
+- []draw paddles + ball (static)
 
 - [] dump a frame to an image file so I can see it without a monitor 
 
