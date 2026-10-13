@@ -41,5 +41,7 @@ get it on real hardware
 Layout:
 
 rtl/ design files
+
 tb/ testbenches
+
 docs/ waveforms and notes
