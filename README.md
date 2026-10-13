@@ -14,7 +14,7 @@ Both are tested in EDA Playground. Waveforms are in docs/.
 
 ----------------------------------------------------------------------------------
 
-Things I got wrong (and fixed): 
+Things I got wrong: 
 
 Originally had fend as a level, not a pulse. With cen high only 1 in 4 clocks, it stayed high for 4 cycles, which would make the game update 4 times per frame. Fixed by ANDing with cen.
 
@@ -23,6 +23,7 @@ Made hsync low for the whole blanking period instead of just the sync pulse.
 ----------------------------------------------------------------------------------
 
 Next:
+
 draw paddles + ball (static)
 
 dump a frame to an image file so I can see it without a monitor 
