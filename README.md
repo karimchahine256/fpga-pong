@@ -54,7 +54,7 @@ What to look for:
 
 ## Next
 
-- [ ] draw paddles + ball (static)
+- [ x] draw paddles + ball (static)
 - [ ] dump a frame to an image file so I can see it without a monitor 
 - [ ] paddle movement
 - [ ] ball physics / collisions
