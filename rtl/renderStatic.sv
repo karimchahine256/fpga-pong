@@ -6,9 +6,9 @@ module renderStatic (
 
 
   localparam PWIDTH  = 5;
-  localparam PHEIGHT = 30;
-  localparam BALL    = 5;
-  localparam LINE_W  = 20;
+  localparam PHEIGHT = 60;
+  localparam BALL    = 10;
+  localparam LINE_W  = 2;
   //assuming (0,0) is top left corner
   localparam LPAD_X = 50,  LPAD_Y = 430;
   localparam RPAD_X = 585, RPAD_Y = 170;
