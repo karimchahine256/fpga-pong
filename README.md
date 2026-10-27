@@ -55,10 +55,10 @@ What to look for:
 ## Next
 
 - [ x] draw paddles + ball (static)
-- [ ] dump a frame to an image file so I can see it without a monitor 
-- [ ] paddle movement
-- [ ] ball physics / collisions
-- [ ] scoring + game states
-- [ ] get it on real hardware
+- [ x] dump a frame to an image file so I can see it without a monitor 
+- [ x] paddle movement
+- [ x] ball physics / collisions
+- [ ] scoring + game states 
+- [ ] get it on real hardware (optional)
 
 
