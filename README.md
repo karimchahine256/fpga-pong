@@ -20,7 +20,9 @@ The timeline of my commits is inaccurate because I upload everything to github o
 
 - `vga_sync`: takes hc/vc and generates `hsync`, `vsync` and `video_on`. Timing values are parameters, so I can test with a tiny 7x6 "screen" instead of scrolling through 420,000 cycles.
 
-Both are tested in EDA Playground.
+- `render`: the game itself. Holds the positions of all elements (paddles and ball) and updates them on fend. Checks for wall and paddle hits, re-serves the ball from the centre when a player misses, and draws the paddles, ball and dashed center line.
+
+All of it is tested in EDA Playground.
 
 
 ## frame_counter test
@@ -47,11 +49,16 @@ What to look for:
 ![vga_sync waveform](docs/vga_sync_wave.png)
 
 
+## render test
+`render_tb` runs the full 640x480 design and writes every frame to a PPM image (`frame0.ppm`, `frame1.ppm`, ...), so I can see the game without a monitor. It moves the paddles with fake button presses and checks that the ball bounces off the walls and paddles and gets re-served after a miss.
+
+
 ## Things I got wrong 
 
 - Originally had `fend` as a level, not a pulse. With `cen` high only 1 in 4 clocks, it stayed high for 4 cycles, which would make the game update 4 times per frame. Fixed by ANDing with cen.
 - Made `hsync` low for the whole blanking period instead of just the sync pulse.
-
+- Flipped the ball's direction on a hit instead of setting it, so a ball that stayed in the hit zone for two frames jittered in place.
+-The ball bounced one frame late: the direction register updated on the same clock edge as the movement, so the ball took one more step into the wall or paddle. At high speed, that extra step after a paddle hit landed in the "missed" zone and gave the other player a point. Fixed by computing the next direction combinationally (`nextDirX`/`nextDirY`) and using it for the move on the same frame.
 
 
 ## Next
