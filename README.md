@@ -58,7 +58,8 @@ What to look for:
 - Originally had `fend` as a level, not a pulse. With `cen` high only 1 in 4 clocks, it stayed high for 4 cycles, which would make the game update 4 times per frame. Fixed by ANDing with cen.
 - Made `hsync` low for the whole blanking period instead of just the sync pulse.
 - Flipped the ball's direction on a hit instead of setting it, so a ball that stayed in the hit zone for two frames jittered in place.
--The ball bounced one frame late: the direction register updated on the same clock edge as the movement, so the ball took one more step into the wall or paddle. At high speed, that extra step after a paddle hit landed in the "missed" zone and gave the other player a point. Fixed by computing the next direction combinationally (`nextDirX`/`nextDirY`) and using it for the move on the same frame.
+
+- The ball bounced one frame late: the direction register updated on the same clock edge as the movement, so the ball took one more step into the wall or paddle. At high speed, that extra step after a paddle hit landed in the "missed" zone and gave the other player a point. Fixed by computing the next direction combinationally (`nextDirX`/`nextDirY`) and using it for the move on the same frame.
 
 
 ## Next
