@@ -1,3 +1,5 @@
+// render static was a stepping stone to the final render module, it should not be used in implementing the final design 
+
 module renderStatic (
     input  logic [9:0] hc, vc,
     input  logic video_on,
