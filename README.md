@@ -4,6 +4,8 @@ My attempt at building Pong in SystemVerilog, with VGA output (640x480 @ 60Hz). 
 
 For now I’m verifying everything through simulations until I can get access to a board to test on.
 
+The timeline of my commits is inaccurate because I upload everything to github once I have the time, I will try and be more accurate on my next project.
+
 ## Layout
 
 - `rtl/` design files
