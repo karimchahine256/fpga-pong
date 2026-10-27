@@ -1,0 +1,55 @@
+module render_tb();
+
+logic clk, reset, cen, fstart, fend;
+logic p1_up, p1_down, p2_up, p2_down;
+logic [9:0] hc, vc;
+logic video_on;
+logic [3:0] R, G, B;
+logic lost1, lost2;
+logic hsync, vsync;
+
+frame_counter f (.*);
+vga_sync v (.*);
+render r (.*);
+
+integer file;
+integer frame_n = 0;
+
+initial begin
+cen = 1'b1;
+clk = 1'b0;
+reset = 1'b1;
+{p1_up, p1_down, p2_up, p2_down} = 4'b0;
+#30
+reset = 1'b0;
+p1_up <=1'b1;
+p2_down <= 1'b1;
+repeat (4) @(posedge fend);
+p1_up <=1'b0;
+p2_down <= 1'b0;
+repeat (16) @(posedge fend);
+$finish;
+end
+
+always begin
+    #5
+    clk = !clk;
+end
+
+always @(posedge clk) begin
+    if(!reset) begin
+    if(fstart) begin
+        file = $fopen($sformatf("frame%0d.ppm", frame_n), "w"); // this way the output ppm files will be named frameN.ppm. N being the frame number decided by the repeat (N) @(posedge fend)
+        $fwrite(file, "P3\n640 480\n15\n");
+    end
+    if(video_on) begin
+        $fwrite(file, "%0d %0d %0d\n", R, G, B);
+    end
+    if(fend) begin
+        $fclose(file);
+        frame_n <= frame_n+1;
+    end
+    end
+end
+
+endmodule
