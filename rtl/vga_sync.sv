@@ -1,5 +1,10 @@
-module vga_sync #(parameter H_VISIBLE = 640, H_FP = 16, H_SYNC = 96, H_BP = 48, parameter V_VISIBLE = 480, V_FP = 10, V_SYNC = 2,  V_BP = 33)
+/* verilator lint_off UNUSED */  // H_BP / V_BP only document the timing
+module vga_sync #(
+    parameter H_VISIBLE = 640, H_FP = 16, H_SYNC = 96, H_BP = 48,
+    parameter V_VISIBLE = 480, V_FP = 10, V_SYNC = 2,  V_BP = 33
+)
 (input logic [9:0] hc, vc, output logic hsync, vsync, video_on);
+/* verilator lint_on UNUSED */
 
 always_comb begin
     hsync    = 1'b1;

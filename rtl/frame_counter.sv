@@ -1,5 +1,5 @@
 module frame_counter #(parameter HMAX = 800, VMAX = 525)
-(input logic clk, logic reset, logic cen, output logic [9:0] hc, logic [9:0] vc, logic fstart, logic fend);
+(input logic clk, input logic reset, input logic cen, output logic [9:0] hc, output logic [9:0] vc, output logic fstart, output logic fend);
 
 assign fstart = (hc == 10'b0 && vc == 10'b0) && cen;
 assign fend = (hc == HMAX-1) && (vc == VMAX-1) && cen;
