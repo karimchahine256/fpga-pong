@@ -22,7 +22,7 @@ For now I’m verifying everything through simulations until I can get access to
 
 - `digit`: draws one seven-segment digit on screen at a given position, used for the scores.
 
-- `sevenSegment`: turns each score into the segments to light up. Player 2's digit is mirrored.
+- `sevenSegment`: turns each score into the segments to light up. Player 2's 1 is drawn on the left so it sits next to the centre line.
 
 - `tt_um_pong`: top level in the Tiny Tapeout pin format. Connects the modules, reads a Gamepad Pmod (and plain buttons on `ui_in[3:0]`), and outputs RGB + sync on the TinyVGA Pmod pins. Select (or button 7) toggles 1-player / 2-player, Start cycles the computer's difficulty and restarts the game.
 
