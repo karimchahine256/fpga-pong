@@ -7,6 +7,8 @@ logic video_on;
 logic [3:0] R, G, B;
 logic lost1, lost2;
 logic hsync, vsync;
+logic mode;               // 0 = two players, 1 = vs computer
+logic [1:0] difficulty;
 
 frame_counter f (.*);
 vga_sync v (.*);
@@ -20,6 +22,8 @@ cen = 1'b1;
 clk = 1'b0;
 reset = 1'b1;
 {p1_up, p1_down, p2_up, p2_down} = 4'b0;
+mode = 1'b0;
+difficulty = 2'd1;
 #30
 reset = 1'b0;
 p1_up <=1'b1;

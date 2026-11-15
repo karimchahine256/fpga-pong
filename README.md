@@ -18,9 +18,13 @@ For now I’m verifying everything through simulations until I can get access to
 
 - `vga_sync`: takes hc/vc and generates `hsync`, `vsync` and `video_on`. Timing values are parameters, so I can test with a tiny 7x6 "screen" instead of scrolling through 420,000 cycles.
 
-- `render`: the game itself. Holds the paddle positions, ball position and ball direction in registers and updates them on `fend`. Checks for wall and paddle hits, re-serves the ball from the centre when a player misses, and draws the paddles, ball and dashed centre line by comparing the current pixel against each object's bounds.
+- `render`: the game itself. Holds the paddle positions, ball position and ball direction in registers and updates them on `fend`. Checks for wall and paddle hits, re-serves the ball from the centre when a player misses, and draws the paddles, ball and dashed centre line by comparing the current pixel against each object's bounds. Also keeps the score (first to 5 wins), speeds the ball up the longer a rally goes, and runs the computer paddle in 1-player mode.
 
-- `tt_um_pong`: top level in the Tiny Tapeout pin format. Connects the three modules, reads a Gamepad Pmod (and plain buttons on `ui_in[3:0]`), and outputs RGB + sync on the TinyVGA Pmod pins.
+- `digit`: draws one seven-segment digit on screen at a given position, used for the scores.
+
+- `sevenSegment`: turns each score into the segments to light up. Player 2's digit is mirrored.
+
+- `tt_um_pong`: top level in the Tiny Tapeout pin format. Connects the modules, reads a Gamepad Pmod (and plain buttons on `ui_in[3:0]`), and outputs RGB + sync on the TinyVGA Pmod pins. Select (or button 7) toggles 1-player / 2-player, Start cycles the computer's difficulty and restarts the game.
 
 - `gamepad_pmod.v`: Gamepad Pmod driver by Pat Deegan (Apache-2.0), used as is.
 
@@ -74,6 +78,6 @@ What to look for:
 - [x] dump a frame to an image file so I can see it without a monitor
 - [x] paddle movement
 - [x] ball physics / collisions
-- [ ] scoring + game states
-- [ ] 1-player mode (computer paddle)
+- [x] scoring + game states
+- [x] 1-player mode (computer paddle)
 - [ ] get it on real hardware
