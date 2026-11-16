@@ -210,10 +210,10 @@ module render (
   assign R_Padel = (hc >= RPAD_X && hc < RPAD_X + PWIDTH) && (vc >= Rpad_Y && vc < Rpad_Y + PHEIGHT);
   assign Center_Line = vc[3] && (hc >= LINE_X && hc < LINE_X + LINE_W);
   assign Ball = (hc >= Ball_X && hc < Ball_X + BALL) && (vc >= Ball_Y && vc < Ball_Y + BALL);
-  assign L_Edge = (hc>=0 && hc<2) && (vc>=0 && vc<480);
-  assign R_Edge = (hc>=640-2 && hc<640) && (vc>=0 && vc<480);
-  assign Top_Edge = (hc>=0 && hc<640) && (vc>=0 && vc<2);
-  assign Bottom_Edge = (hc>=0 && hc<640) && (vc>=480-2 && vc<480);
+  assign L_Edge = (hc==0) && (vc>=0 && vc<480);
+  assign R_Edge = (hc==639) && (vc>=0 && vc<480);
+  assign Top_Edge = (hc>=0 && hc<640) && (vc==0);
+  assign Bottom_Edge = (hc>=0 && hc<640) && (vc==479);
 
   // walls: turn if the next step would cross the edge (one step of margin is enough now)
   assign hitRoof  = (Ball_Y < spd);
