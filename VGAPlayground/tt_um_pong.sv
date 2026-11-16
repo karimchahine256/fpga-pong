@@ -203,13 +203,17 @@ module render (
   assign spd = BALLSPEED + {7'b0, SpeedUp};    
   assign padSpd = MPF + {7'b0, SpeedUp>>1};       // player paddles: + half the speed-up
 
-  logic L_Padel, R_Padel, Center_Line, Ball;
+  logic L_Padel, R_Padel, Center_Line, Ball,L_Edge,R_Edge,Top_Edge,Bottom_Edge;
   logic hitRoof, hitFloor, hitLpad, hitRpad;
 
   assign L_Padel = (hc >= LPAD_X && hc < LPAD_X + PWIDTH) && (vc >= Lpad_Y && vc < Lpad_Y + PHEIGHT);
   assign R_Padel = (hc >= RPAD_X && hc < RPAD_X + PWIDTH) && (vc >= Rpad_Y && vc < Rpad_Y + PHEIGHT);
   assign Center_Line = vc[3] && (hc >= LINE_X && hc < LINE_X + LINE_W);
   assign Ball = (hc >= Ball_X && hc < Ball_X + BALL) && (vc >= Ball_Y && vc < Ball_Y + BALL);
+  assign L_Edge = (hc>=0 && hc<2) && (vc>=0 && vc<480);
+  assign R_Edge = (hc>=640-2 && hc<640) && (vc>=0 && vc<480);
+  assign Top_Edge = (hc>=0 && hc<640) && (vc>=0 && vc<2);
+  assign Bottom_Edge = (hc>=0 && hc<640) && (vc>=480-2 && vc<480);
 
   // walls: turn if the next step would cross the edge (one step of margin is enough now)
   assign hitRoof  = (Ball_Y < spd);
@@ -294,6 +298,11 @@ module render (
         B = 4'b1111;
       end
       if(score1_on || score2_on) begin
+        R = 4'b1111;
+        G = 4'b1111;
+        B = 4'b1111;
+      end
+      if(L_Edge || R_Edge || Top_Edge || Bottom_Edge) begin
         R = 4'b1111;
         G = 4'b1111;
         B = 4'b1111;
