@@ -26,9 +26,15 @@ For now I’m verifying everything through simulations until I can get access to
 
 - `tt_um_pong`: top level in the Tiny Tapeout pin format. Connects the modules, reads a Gamepad Pmod (and plain buttons on `ui_in[3:0]`), and outputs RGB + sync on the TinyVGA Pmod pins. Select (or button 7) toggles 1-player / 2-player, Start cycles the computer's difficulty and restarts the game.
 
-- `gamepad_pmod.v`: Gamepad Pmod driver by Pat Deegan (Apache-2.0), used as is.
+- Gamepad input uses the Gamepad Pmod driver (`gamepad_pmod.v` by Pat Deegan, Apache-2.0), which is already included in VGA Playground's Gamepad example.
 
-All of it is tested in EDA Playground, and the top level runs in the browser on [VGA Playground](https://vga-playground.com).
+  
+The game was tested in EDA Playground up until the addition of different modes, at which point I began testing it directly on VGA Playground.
+
+
+## How to play
+
+You can play it in your browser! Go to [VGA Playground](https://vga-playground.com) and open the **Gamepad** example. Replace everything in its `project.v` tab with the contents of `VGAPlayground/tt_um_pong.sv`, which contains the whole design. It compiles automatically and starts running on the virtual VGA screen. Turn on the gamepad above the display by clicking the game controller icon, click the screen so it gets your key presses, and play: player 1 uses the **up/down arrow keys**, player 2 uses **X/B**, **S** switches between 2-player and vs. computer, **T** changes the difficulty and restarts, and **Shift+R** resets the game. First to 5 wins!
 
 
 ## frame_counter test
