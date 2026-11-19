@@ -1,8 +1,13 @@
 # fpga-pong
 
-My attempt at building Pong in SystemVerilog, with VGA output (640x480 @ 60Hz). I’m doing this to learn RTL design instead of just reading about it, so the code is written by me, using tutorials and references along the way.
+My attempt at building Pong in SystemVerilog, with VGA output (640x480 @ 60Hz). I’m doing this to learn RTL design, so the code is written by me, using tutorials and references along the way for the VGA parts.
 
 For now I’m verifying everything through simulations until I can get access to a board to test on. The full design also passes the Tiny Tapeout GF180 build (synthesis, place and route, DRC, gate-level test) in one tile.
+
+## How to play
+
+You can play it in your browser! Go to [VGA Playground](https://vga-playground.com) and open the **Gamepad** preset. Replace everything in its `project.v` tab with the contents of `VGAPlayground/tt_um_pong.sv`, which contains the whole design. It compiles automatically and starts running on the virtual VGA screen. Turn on the gamepad above the display by clicking the game controller icon, click the screen so it gets your key presses, and play: player 1 uses the **up/down arrow keys**, player 2 uses **X/B**, **S** switches between 2-player and vs. computer, **T** changes the difficulty and restarts, and **Shift+R** resets the game. First to 5 wins!
+
 
 ![gameplay](docs/gameplay.gif)
 
@@ -31,10 +36,6 @@ For now I’m verifying everything through simulations until I can get access to
   
 The game was tested in EDA Playground up until the addition of different modes, at which point I began testing it directly on VGA Playground.
 
-
-## How to play
-
-You can play it in your browser! Go to [VGA Playground](https://vga-playground.com) and open the **Gamepad** preset. Replace everything in its `project.v` tab with the contents of `VGAPlayground/tt_um_pong.sv`, which contains the whole design. It compiles automatically and starts running on the virtual VGA screen. Turn on the gamepad above the display by clicking the game controller icon, click the screen so it gets your key presses, and play: player 1 uses the **up/down arrow keys**, player 2 uses **X/B**, **S** switches between 2-player and vs. computer, **T** changes the difficulty and restarts, and **Shift+R** resets the game. First to 5 wins!
 
 
 ## frame_counter test
