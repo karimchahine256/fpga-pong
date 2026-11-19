@@ -249,7 +249,7 @@ module render (
 
   // distance to the ball (always positive) and how far to move this frame
   assign distance = ballAbove ? padC - ballC : ballC - padC;
-  assign step = (distance < {7'b0, mpf_com}) ? distance : {7'b0, mpf_com};   // never overshoot
+  assign step = (distance < {7'b0, mpf_com+SpeedUp/2}) ? distance : {7'b0, mpf_com+SpeedUp/2};   // never overshoot
 
   // next position when moving up / down, clamped to the screen
   assign padUp   = (Rpad_Y < step) ? 0 : Rpad_Y - step;
@@ -260,16 +260,16 @@ module render (
   // computer paddle speed for each difficulty
   always_comb begin
     case (difficulty)
-      2'b00:   mpf_com = 3'd2;
-      2'b01:   mpf_com = 3'd3;
-      2'b10:   mpf_com = 3'd4;
-      default: mpf_com = 3'd6;
+      2'b00:   mpf_com = (BALLSPEED/2) + 1;
+      2'b01:   mpf_com = BALLSPEED;
+      2'b10:   mpf_com = BALLSPEED + 1;
+      default: mpf_com = BALLSPEED + 2;
     endcase
   end
 
-  // return speed: half of mpf_com, but at least 1
+  // return speed: half of mpf_com
   logic [2:0] ret;
-  assign ret = (mpf_com + 3'd1) >> 1;
+  assign ret = (mpf_com) >> 1;
   
 
   always_comb begin
