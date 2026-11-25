@@ -1,6 +1,6 @@
 module render (
     input  logic clk, reset, fend, mode,
-    input  logic [1:0] difficulty,
+    input  logic [1:0] difficulty, 
     input  logic p1_up, p1_down, p2_up, p2_down,
     input  logic [9:0] hc, vc,
     input  logic video_on,
@@ -16,8 +16,8 @@ module render (
 
   logic score1_on, score2_on;
 
-  digit #(.X0(270), .Y0(20)) d1 (.hc(hc), .vc(vc), .disp(disp1), .on(score1_on));
-  digit #(.X0(330), .Y0(20)) d2 (.hc(hc), .vc(vc), .disp(disp2), .on(score2_on));
+  digit #(.X0(265), .Y0(20)) d1 (.hc(hc), .vc(vc), .disp(disp1), .on(score1_on));
+  digit #(.X0(335), .Y0(20)) d2 (.hc(hc), .vc(vc), .disp(disp2), .on(score2_on));
 
   localparam PWIDTH  = 5;
   localparam PHEIGHT = 60;
@@ -39,18 +39,22 @@ module render (
   logic [2:0] SpeedUp;    // extra px/frame added to the ball speed
   logic paddleHit;        // 1 on the frame the ball actually bounces off a paddle
 
-  // current speeds as 10-bit values since VGA Playground requires it, these should get trimmed during synthesis
+  // current speeds as 10-bit values since VGA Playground requires it, these should get trimmed during synthesis 
   logic [9:0] spd, padSpd;
-  assign spd = BALLSPEED + {7'b0, SpeedUp};
+  assign spd = BALLSPEED + {7'b0, SpeedUp};    
   assign padSpd = MPF + {7'b0, SpeedUp>>1};       // player paddles: + half the speed-up
 
-  logic L_Padel, R_Padel, Center_Line, Ball;
+  logic L_Padel, R_Padel, Center_Line, Ball,L_Edge,R_Edge,Top_Edge,Bottom_Edge;
   logic hitRoof, hitFloor, hitLpad, hitRpad;
 
   assign L_Padel = (hc >= LPAD_X && hc < LPAD_X + PWIDTH) && (vc >= Lpad_Y && vc < Lpad_Y + PHEIGHT);
   assign R_Padel = (hc >= RPAD_X && hc < RPAD_X + PWIDTH) && (vc >= Rpad_Y && vc < Rpad_Y + PHEIGHT);
   assign Center_Line = vc[3] && (hc >= LINE_X && hc < LINE_X + LINE_W);
   assign Ball = (hc >= Ball_X && hc < Ball_X + BALL) && (vc >= Ball_Y && vc < Ball_Y + BALL);
+  assign L_Edge = (hc==0) && (vc<480);
+  assign R_Edge = (hc==639) && (vc<480);
+  assign Top_Edge = (hc<640) && (vc==0);
+  assign Bottom_Edge = (hc<640) && (vc==479);
 
   // walls: turn if the next step would cross the edge (one step of margin is enough now)
   assign hitRoof  = (Ball_Y < spd);
@@ -86,7 +90,10 @@ module render (
 
   // distance to the ball (always positive) and how far to move this frame
   assign distance = ballAbove ? padC - ballC : ballC - padC;
-  assign step = (distance < {7'b0, mpf_com}) ? distance : {7'b0, mpf_com};   // never overshoot
+  // computer speed = difficulty speed + half the rally speed-up (10 bits so the sum can't overflow)
+  logic [9:0] comSpd;
+  assign comSpd = {7'b0, mpf_com} + {7'b0, SpeedUp >> 1};
+  assign step = (distance < comSpd) ? distance : comSpd;   // never overshoot
 
   // next position when moving up / down, clamped to the screen
   assign padUp   = (Rpad_Y < step) ? 0 : Rpad_Y - step;
@@ -97,17 +104,17 @@ module render (
   // computer paddle speed for each difficulty
   always_comb begin
     case (difficulty)
-      2'b00:   mpf_com = 3'd2;
-      2'b01:   mpf_com = 3'd3;
-      2'b10:   mpf_com = 3'd4;
-      default: mpf_com = 3'd6;
+      2'b00:   mpf_com = (BALLSPEED/2) + 1;
+      2'b01:   mpf_com = BALLSPEED;
+      2'b10:   mpf_com = BALLSPEED + 1;
+      default: mpf_com = BALLSPEED + 2;
     endcase
   end
 
-  // return speed: half of mpf_com, but at least 1
+  // return speed: half of mpf_com
   logic [2:0] ret;
-  assign ret = (mpf_com + 3'd1) >> 1;
-
+  assign ret = (mpf_com) >> 1;
+  
 
   always_comb begin
     R = 4'b0000;
@@ -135,6 +142,11 @@ module render (
         B = 4'b1111;
       end
       if(score1_on || score2_on) begin
+        R = 4'b1111;
+        G = 4'b1111;
+        B = 4'b1111;
+      end
+      if(L_Edge || R_Edge || Top_Edge || Bottom_Edge) begin
         R = 4'b1111;
         G = 4'b1111;
         B = 4'b1111;

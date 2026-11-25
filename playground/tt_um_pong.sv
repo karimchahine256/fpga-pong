@@ -210,10 +210,10 @@ module render (
   assign R_Padel = (hc >= RPAD_X && hc < RPAD_X + PWIDTH) && (vc >= Rpad_Y && vc < Rpad_Y + PHEIGHT);
   assign Center_Line = vc[3] && (hc >= LINE_X && hc < LINE_X + LINE_W);
   assign Ball = (hc >= Ball_X && hc < Ball_X + BALL) && (vc >= Ball_Y && vc < Ball_Y + BALL);
-  assign L_Edge = (hc==0) && (vc>=0 && vc<480);
-  assign R_Edge = (hc==639) && (vc>=0 && vc<480);
-  assign Top_Edge = (hc>=0 && hc<640) && (vc==0);
-  assign Bottom_Edge = (hc>=0 && hc<640) && (vc==479);
+  assign L_Edge = (hc==0) && (vc<480);
+  assign R_Edge = (hc==639) && (vc<480);
+  assign Top_Edge = (hc<640) && (vc==0);
+  assign Bottom_Edge = (hc<640) && (vc==479);
 
   // walls: turn if the next step would cross the edge (one step of margin is enough now)
   assign hitRoof  = (Ball_Y < spd);
@@ -249,7 +249,10 @@ module render (
 
   // distance to the ball (always positive) and how far to move this frame
   assign distance = ballAbove ? padC - ballC : ballC - padC;
-  assign step = (distance < {7'b0, mpf_com+SpeedUp/2}) ? distance : {7'b0, mpf_com+SpeedUp/2};   // never overshoot
+  // computer speed = difficulty speed + half the rally speed-up (10 bits so the sum can't overflow)
+  logic [9:0] comSpd;
+  assign comSpd = {7'b0, mpf_com} + {7'b0, SpeedUp >> 1};
+  assign step = (distance < comSpd) ? distance : comSpd;   // never overshoot
 
   // next position when moving up / down, clamped to the screen
   assign padUp   = (Rpad_Y < step) ? 0 : Rpad_Y - step;
