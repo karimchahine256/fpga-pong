@@ -3,7 +3,7 @@ module vga_sync #(
     parameter V_VISIBLE = 480, V_FP = 10, V_SYNC = 2,  V_BP = 33
 )
 (input logic [9:0] hc, vc, output logic hsync, vsync, video_on);
-/* verilator lint_on UNUSED */
+
 
 always_comb begin
     hsync    = 1'b1;
