@@ -113,8 +113,6 @@ Timing currently misses 100 MHz by about 1 ns (WNS -1.03 ns), since the whole de
 - Flipped the ball's direction on a hit instead of setting it, so a ball that stayed in the hit zone for two frames jittered in place.
 - The re-serve after a miss was written above the normal movement code, so the movement's nonblocking assignments overwrote it and the ball never reset.
 - The ball bounced one frame late: the direction register updated on the same clock edge as the movement, so the ball took one more step into the wall or paddle. At high speed, that extra step after a paddle hit landed in the "missed" zone and gave the other player a point. Fixed by computing the next direction combinationally (`nextDirX`/`nextDirY`) and using it for the move on the same frame.
-- Wrote ports like `input logic clk, logic reset`. The browser simulator accepted it, but Icarus and the chip flow didn't. Every port now has its own direction.
-- Wrote the computer paddle's speed as `{7'b0, mpf_com+SpeedUp/2}`. The `2` is an unsized number, which isn't allowed inside a concatenation, so the strict compiler rejected it. Now computed as a separate 10-bit `comSpd`. Also had `hc>=0` checks in the screen border, which are always true for unsigned values and got flagged too.
 
 
 ## Next
