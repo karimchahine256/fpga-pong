@@ -2,7 +2,7 @@
 
 My attempt at building Pong in SystemVerilog, with VGA output (640x480 @ 60Hz). I’m doing this to learn RTL design, so the code is written by me, using tutorials and references along the way for the VGA parts.
 
-Everything is verified in simulation, and I'm now bringing it up on a Digilent Nexys 4 FPGA board (see [Running on a Nexys 4](#running-on-a-nexys-4-fpga)). The full design also passes the Tiny Tapeout GF180 build (synthesis, place and route, DRC, gate-level test) in one tile.
+Everything is verified in simulation, and it runs on a Digilent Nexys 4 FPGA board (see [Running on a Nexys 4](#running-on-a-nexys-4-fpga)). The full design also passes the Tiny Tapeout GF180 build (synthesis, place and route, DRC, gate-level test) in one tile.
 
 ## How to play
 
@@ -83,7 +83,9 @@ This confirms the 1-in-4 clock enable gives correct 640x480 timing from the boar
 
 ## Running on a Nexys 4 FPGA
 
-Status: simulated, hardware bring-up in progress.
+Status: working on an original Nexys 4.
+
+![running on the Nexys 4](docs/board_demo.gif)
 
 | Control | Board |
 |---|---|
@@ -98,6 +100,8 @@ Pick the constraints file that matches the name printed on the board:
 - `nexys4_original.xdc` for an original Nexys 4 (its buttons and switches are on different pins)
 
 To build in Vivado: create an RTL project for part `XC7A100TCSG324-1`, add `rtl/*.sv`, `fpga/nexys4/nexys4_top.sv` and one of the `.xdc` files, set `nexys4_top` as top, generate the bitstream and program the board. Connect a VGA monitor and play.
+
+Timing currently misses 100 MHz by about 1 ns (WNS -1.03 ns), since the whole design runs on the 100 MHz clock with a clock enable. It still works because the game logic only updates once per frame, but the proper fix is running everything on a 25 MHz clock from the Clocking Wizard.
 
 
 ## Things I got wrong
@@ -121,4 +125,8 @@ To build in Vivado: create an RTL project for part `XC7A100TCSG324-1`, add `rtl/
 - [x] ball physics / collisions
 - [x] scoring + game states
 - [x] 1-player mode (computer paddle)
-- [ ] get it on real hardware
+- [x] get it on real hardware
+- [ ] restart the game when the difficulty or mode switches change
+- [ ] 25 MHz clock so timing passes
+- [ ] USB keyboard controls (PS/2 through the board's USB host port)
+- [ ] sound on hits and points
