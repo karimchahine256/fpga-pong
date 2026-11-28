@@ -33,7 +33,7 @@ You can play it in your browser! Go to [VGA Playground](https://vga-playground.c
 
 - `tt_um_pong`: top level in the Tiny Tapeout pin format. Connects the modules, reads a Gamepad Pmod (and plain buttons on `ui_in[3:0]`), and outputs RGB + sync on the TinyVGA Pmod pins. Select (or button 7) toggles 1-player / 2-player, Start cycles the computer's difficulty and restarts the game.
 
-- `nexys4_top` (in `fpga/nexys4/`): top level for the Nexys 4 board. Makes the 25 MHz pixel tick from the 100 MHz clock with a 1-in-4 `cen`, passes the buttons and switches through two-flip-flop synchronizers, and drives the board's 12-bit VGA port (all 4 bits per colour).
+- `nexys4_top` (in `fpga/nexys4/`): top level for the Nexys 4 board. Makes a 25 MHz pixel clock from the 100 MHz board clock with the Clocking Wizard (an MMCM), passes the buttons and switches through two-flip-flop synchronizers, restarts the game when a switch changes, and drives the board's 12-bit VGA port (all 4 bits per colour).
 
 - Gamepad input uses the Gamepad Pmod driver (`gamepad_pmod.v` by Pat Deegan, Apache-2.0), which is already included in VGA Playground's Gamepad example.
 
@@ -78,7 +78,7 @@ What to look for:
 - `hsync` pulse: 3,840 ns (96 pixels x 40 ns) ✅
 - one line, falling edge to falling edge: 32,000 ns (800 pixels x 40 ns) ✅
 
-This confirms the 1-in-4 clock enable gives correct 640x480 timing from the board clock.
+This confirms correct 640x480 timing from the board clock. These numbers are from the earlier version that used a 1-in-4 clock enable. The current top uses the Clocking Wizard IP, so the testbench has to run in Vivado's simulator (EDA Playground can't simulate the IP), and nothing starts until the clock locks.
 
 
 ## Running on a Nexys 4 FPGA
@@ -99,9 +99,14 @@ Pick the constraints file that matches the name printed on the board:
 - `nexys_a7.xdc` for a Nexys A7 or Nexys 4 DDR
 - `nexys4_original.xdc` for an original Nexys 4 (its buttons and switches are on different pins)
 
-To build in Vivado: create an RTL project for part `XC7A100TCSG324-1`, add `rtl/*.sv`, `fpga/nexys4/nexys4_top.sv` and one of the `.xdc` files, set `nexys4_top` as top, generate the bitstream and program the board. Connect a VGA monitor and play.
+To build in Vivado:
+1. Create an RTL project for part `XC7A100TCSG324-1` and add `rtl/*.sv`, `fpga/nexys4/nexys4_top.sv` and one of the `.xdc` files. Set `nexys4_top` as top.
+2. Add the clock: IP Catalog -> Clocking Wizard, named `clk_wiz_0`. Use an MMCM with a 100 MHz input and one 25 MHz output (`clk_out1`), with the `reset` input turned off and `locked` turned on.
+3. Generate the bitstream and program the board. Connect a VGA monitor and play.
 
-Timing currently misses 100 MHz by about 1 ns (WNS -1.03 ns), since the whole design runs on the 100 MHz clock with a clock enable. It still works because the game logic only updates once per frame, but the proper fix is running everything on a 25 MHz clock from the Clocking Wizard.
+To keep it on the board after power-off, write it to the flash: make a `.bin` with `write_cfgmem -format bin -size 16 -interface SPIx1 -loadbit {up 0x0 <path to nexys4_top.bit>} -file nexys4_top.bin`, then in Hardware Manager add the configuration memory `s25fl128sxxxxxx0-spi-x1_x2_x4`, program it with the `.bin`, and set the MODE jumper to QSPI.
+
+Timing passes with WNS +22.5 ns. The first version ran everything on the 100 MHz clock with a clock enable and missed timing by about 1 ns (WNS -1.03 ns). It still worked, because the game logic only updates once per frame, but moving to a real 25 MHz clock fixed it properly.
 
 
 ## Things I got wrong
@@ -124,7 +129,8 @@ Timing currently misses 100 MHz by about 1 ns (WNS -1.03 ns), since the whole de
 - [x] scoring + game states
 - [x] 1-player mode (computer paddle)
 - [x] get it on real hardware
-- [ ] restart the game when the difficulty or mode switches change
-- [ ] 25 MHz clock so timing passes
+- [x] restart the game when the difficulty or mode switches change
+- [x] 25 MHz clock so timing passes
+- [x] boot from the board's flash
 - [ ] USB keyboard controls (PS/2 through the board's USB host port)
 - [ ] sound on hits and points
