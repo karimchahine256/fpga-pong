@@ -16,12 +16,12 @@ logic restart, game_reset;
 
 assign reset = ~CPU_RESETN;
     
-assign restart = (swPrev != SW);
+assign restart = (swPrev != sync2 [2:0]);
     
-assign game_reset = reset || restart;    
+assign game_reset = reset | restart;    
     
 always_ff @(posedge CLK100MHZ) begin
-    swPrev <= sync2;
+    swPrev <= sync2 [2:0];
 end
         
     
@@ -53,7 +53,7 @@ frame_counter fc (.clk(CLK100MHZ), .reset(reset), .cen(cen), .hc(hc), .vc(vc), .
 
 vga_sync vs (.hc(hc), .vc(vc), .hsync(VGA_HS), .vsync(VGA_VS), .video_on(video_on));
 
-    render r (.clk(CLK100MHZ), .reset(game_reset),
+render r (.clk(CLK100MHZ), .reset(game_reset),
           .p1_up(sync2[6]), .p1_down(sync2[5]), .p2_up(sync2[4]), .p2_down(sync2[3]),
           .mode(sync2[2]), .difficulty(sync2[1:0]),
           .fend(fend), .hc(hc), .vc(vc), .video_on(video_on),
