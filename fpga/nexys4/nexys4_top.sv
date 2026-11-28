@@ -1,8 +1,8 @@
 module nexys4_top (
     input  logic        CLK100MHZ,
-    input  logic        CPU_RESETN,            
+    input  logic        CPU_RESETN,            // red reset button, active-low
     input  logic        BTNU, BTND, BTNL, BTNR,
-    input  logic [2:0]  SW,                    
+    input  logic [2:0]  SW,                    // SW2 = mode, SW1-SW0 = difficulty
     output logic [3:0]  VGA_R, VGA_G, VGA_B,
     output logic        VGA_HS, VGA_VS
 );
@@ -14,20 +14,18 @@ logic [2:0] swPrev;
 logic restart, game_reset;
 logic locked, clk25;
 
-assign reset = ~CPU_RESETN | ~locked;
-    
-assign restart = (swPrev != sync2 [2:0]);
-    
-assign game_reset = reset | restart;    
+// 25 MHz pixel clock from the 100 MHz board clock (Clocking Wizard IP)
+clk_wiz_0 clkgen (.clk_in1(CLK100MHZ), .clk_out1(clk25), .locked(locked));
 
+assign reset = ~CPU_RESETN | ~locked;           // hold reset until the clock is stable
 
-
+// restart the game when a switch changes (mode or difficulty)
+assign restart = (swPrev != sync2[2:0]);
+assign game_reset = reset | restart;
 
 always_ff @(posedge clk25) begin
-    swPrev <= sync2 [2:0];
+  swPrev <= sync2[2:0];
 end
-        
-
 
 // synchronize buttons and switches to the clock (two flip-flops each)
 // bits: 6 = BTNU, 5 = BTND, 4 = BTNL, 3 = BTNR, 2 = SW2, 1 = SW1, 0 = SW0
@@ -36,8 +34,6 @@ always_ff @(posedge clk25) begin
   sync2 <= sync1;
 end
 
-clk_wiz_0 clkgen (.clk_in1(CLK100MHZ), .clk_out1(clk25), .locked(locked));
-    
 frame_counter fc (.clk(clk25), .reset(reset), .cen(1'b1), .hc(hc), .vc(vc), .fstart(fstart), .fend(fend));
 
 vga_sync vs (.hc(hc), .vc(vc), .hsync(VGA_HS), .vsync(VGA_VS), .video_on(video_on));
