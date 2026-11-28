@@ -11,9 +11,20 @@ logic reset, fstart, fend, video_on, cen;
 logic [1:0] counter;
 logic [9:0] hc, vc;
 logic [6:0] sync1, sync2;
+logic [2:0] swPrev;
+logic restart, game_reset;
 
 assign reset = ~CPU_RESETN;
-
+    
+assign restart = (swPrev != SW);
+    
+assign game_reset = reset || restart;    
+    
+always_ff @(posedge CLK100MHZ) begin
+    swPrev <= sync2;
+end
+        
+    
 // pixel tick: cen high 1 clock in 4 -> 25 MHz
 always_ff @(posedge CLK100MHZ) begin
   if (reset) begin
@@ -42,7 +53,7 @@ frame_counter fc (.clk(CLK100MHZ), .reset(reset), .cen(cen), .hc(hc), .vc(vc), .
 
 vga_sync vs (.hc(hc), .vc(vc), .hsync(VGA_HS), .vsync(VGA_VS), .video_on(video_on));
 
-render r (.clk(CLK100MHZ), .reset(reset),
+    render r (.clk(CLK100MHZ), .reset(game_reset),
           .p1_up(sync2[6]), .p1_down(sync2[5]), .p2_up(sync2[4]), .p2_down(sync2[3]),
           .mode(sync2[2]), .difficulty(sync2[1:0]),
           .fend(fend), .hc(hc), .vc(vc), .video_on(video_on),
